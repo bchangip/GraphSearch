@@ -1,17 +1,12 @@
 class GraphSearch(object):
 	def __init__(self, problem):
-		self.workspace = problem["workspace"]
-		self.initial = problem["initial"]
-		self.target = problem["target"]
-		self.actions = problem["actions"]
-		self.result = problem["result"]
-		self.goalTest = problem["goalTest"]
-		self.stepCost = problem["stepCost"]
-		self.pathCost = problem["pathCost"]
-		self.heuristic = problem["heuristic"]
+		self.problem = problem
+		self.workspace = problem.workspace
+		self.initial = problem.initial
+		self.target = problem.target
 
 	def graphSearch(self, criteria):
-		frontier = [*self.initial]
+		frontier = [*self.problem.initial]
 		explored = set()
 		while True:
 			if len(frontier):
@@ -22,11 +17,11 @@ class GraphSearch(object):
 				s = path[-1]
 				explored.add(s)
 
-				if self.goalTest(s):
+				if self.problem.goalTest(s):
 					return path
 
-				for a in self.actions(s):
-					result = self.result(s, a)
+				for a in self.problem.actions(s):
+					result = self.problem.result(s, a)
 					if result not in explored:
 						frontier.append([*path, result])
 
@@ -34,7 +29,7 @@ class GraphSearch(object):
 				return False
 
 	def breadthFirstSearch(self):
-		return self.graphSearch(len)
+		return self.graphSearch(self.problem.pathCost)
 
 	def aStar(self):
-		return self.graphSearch(lambda x: len(x)+self.heuristic(x[-1]))
+		return self.graphSearch(lambda x: self.problem.pathCost(x)+self.problem.heuristic(x[-1]))
